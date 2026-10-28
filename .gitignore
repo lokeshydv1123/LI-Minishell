@@ -1,0 +1,15 @@
+minishell
+*.out
+*.o
+
+# Debugging files
+core
+core.*
+
+# IDE and editor settings
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
