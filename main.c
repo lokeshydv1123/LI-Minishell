@@ -1,11 +1,18 @@
 #include "main.h"
 
+#define MAX_EXTERNAL_COMMANDS 200
+pid_t pid = -1;
+int status = 0;
+Job *head = NULL;
+
 int main(void)
 {
-    system("clear");
-
     char mini[100] = "thor@son_of_odin$ ";
     char str[1024];
+
+    char *external_commands[MAX_EXTERNAL_COMMANDS];
+
+    extract_external_commands(external_commands);
 
     while (1)
     {
@@ -18,37 +25,56 @@ int main(void)
         str[strcspn(str, "\n")] = '\0';
 
         if (strncmp(str, "PS1", 3) == 0)
-            copy_change(mini, str);
-
-        else if (str[0] != '\0')
         {
-            char command_copy[1024];
-            strcpy(command_copy, str);
-            char *command = get_command(command_copy);
-            int type = check_command_type(command);
+            copy_change(mini, str);
+            continue;
+        }
 
-            switch (type)
+        if (str[0] == '\0')
+            continue;
+
+        char command_copy[1024];
+        strcpy(command_copy, str);
+
+        char *command = get_command(command_copy);
+
+        int type = check_command_type(command, external_commands);
+
+        switch (type)
+        {
+            case BUILTIN:
             {
-                case BUILTIN:
-                    printf("Built-in command: %s\n", command);
-                    break;
+                char internal_copy[1024];
+                strcpy(internal_copy, str);
 
-                case EXTERNAL:
-                    printf("External command: %s\n", command);
-                    break;
-
-                case NO_COMMAND:
-                    printf("Command not found: %s\n", command != NULL ? command : "");
-                    break;
+                execute_internal_commands(internal_copy);
+                break;
             }
+
+            case EXTERNAL:
+            {
+                char command_copy[1024];
+                strcpy(command_copy, str);
+
+                execute_external_commands(command_copy);
+                break;
+            }
+
+            case NO_COMMAND:
+                printf("Command not found: %s\n",
+                       command != NULL ? command : "");
+                break;
         }
     }
+
+    for (int i = 0; external_commands[i] != NULL; i++)
+        free(external_commands[i]);
 
     return 0;
 }
 
 void copy_change(char *prompt, char *input_string)
-{
+{   
     int i;
 
     for (i = 0; input_string[i] != '\0'; i++)
