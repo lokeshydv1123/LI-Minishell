@@ -2,6 +2,7 @@
 #define MAIN_H
 #define MAX_EXTERNAL_COMMANDS 200
 
+// Global variables
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -25,11 +26,13 @@ typedef struct node
     struct node *link;
 } Job;
 extern Job *head;
- 
+
+// Command type definitions
 #define BUILTIN     1
 #define EXTERNAL    2
 #define NO_COMMAND  3
 
+// ANSI color codes for terminal output
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
 #define ANSI_COLOR_YELLOW  "\x1b[33m"
@@ -39,11 +42,10 @@ extern Job *head;
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
 
+// Function declarations
 void scan_input(char *prompt, char *input_string, char **external_commands);
 char *get_command(char *input_string);
-
 void copy_change(char *prompt, char *input_string);
-
 int check_command_type(char *command, char **external_commands);
 void echo(char *input_string, int status);
 void execute_internal_commands(char *input_string);
