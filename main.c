@@ -1,5 +1,20 @@
 #include "main.h"
 
+/*
+    Name : Lokesh Yadav
+    ID : 26010_073
+    Project : Mini Shell
+    Description:
+    main.c : Main entry point for the mini shell program. 
+    main.h : Header file containing function declarations, structure definitions, and constants used in the mini shell project.
+    .gitignore : Specifies files and directories to be ignored by Git.
+    extract_external_commands.c : Contains functions to extract external commands from a file and execute them, including support for pipelines.
+    execute_internal_commands.c : Contains functions to execute internal commands such as exit, pwd, cd, echo, jobs, fg, and bg.
+    signal_handler.c : Contains the signal handler function to handle SIGINT, SIGTSTP, and SIGCHLD signals.
+    scan_input.c : Contains functions to scan and process user input, including handling of the PS1 command to change the shell prompt.
+    README.md : Provides an overview of the mini shell project, including its purpose, features, and usage instructions.
+*/
+
 #define MAX_EXTERNAL_COMMANDS 200
 
 // Function to extract external commands from a file and store them in an array
