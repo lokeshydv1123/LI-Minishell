@@ -70,14 +70,9 @@ char *get_command(char *input_string)
 
 int check_command_type(char *command, char **external_commands)
 {
-    char *builtins[] = {
-        "echo", "printf", "read", "cd", "pwd",
-        "pushd", "popd", "dirs", "let", "eval",
-        "set", "unset", "export", "declare",
-        "typeset", "readonly", "getopts", "source",
-        "exit", "exec", "shopt", "caller", "true",
-        "type", "hash", "bind", "help", "jobs", "fg", "bg", NULL
-    };
+    char *builtins[] = { "echo", "printf", "read", "cd", "pwd", "pushd", "popd", "dirs", "let", "eval", "set", "unset", "export", "declare",
+        "typeset", "readonly", "getopts", "source", "exit", "exec", "shopt", "caller", "true", "type", "hash", "bind", "help", "jobs",
+        "fg", "bg", NULL };
 
     if (command == NULL || command[0] == '\0')
         return NO_COMMAND;

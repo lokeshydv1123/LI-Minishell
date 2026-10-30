@@ -11,9 +11,7 @@ void execute_internal_commands(char *input_string)
         return;
 
     if (strcmp(command, "exit") == 0)
-    {
         exit(0);
-    }
     else if (strcmp(command, "pwd") == 0)
     {
         char cwd[1024];
@@ -36,21 +34,13 @@ void execute_internal_commands(char *input_string)
             perror("cd");
     }
     else if (strcmp(command, "echo") == 0)
-    {
         echo(input_string, status);
-    }
     else if (strcmp(command, "jobs") == 0)
-    {
         print_jobs();
-    }
     else if (strcmp(command, "fg") == 0)
-    {
         execute_fg();
-    }
     else if (strcmp(command, "bg") == 0)
-    {
         execute_bg();
-    }
 }
 
 void echo(char *input_string, int status)
@@ -61,26 +51,18 @@ void echo(char *input_string, int status)
         text++;
 
     if (*text == '\0')
-    {
         printf("\n");
-    }
     else if (strcmp(text, "$SHELL") == 0)
     {
         char *shell = getenv("SHELL");
         printf("%s\n", shell != NULL ? shell : "");
     }
     else if (strcmp(text, "$$") == 0)
-    {
         printf("%d\n", (int)getpid());
-    }
     else if (strcmp(text, "$?") == 0)
-    {
         printf("%d\n", status);
-    }
     else
-    {
         printf("%s\n", text);
-    }
 }
 
 void insert_job(pid_t pid, char *process, char *input)

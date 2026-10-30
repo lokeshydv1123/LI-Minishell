@@ -15,6 +15,7 @@
 
 extern pid_t pid;
 extern int status;
+extern char *prompt;
 
 typedef struct node
 {

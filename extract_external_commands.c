@@ -46,9 +46,8 @@ void execute_external_commands(char *input_string)
     int pipefd[2];
     int prev_read = -1;
     int count = 0;
-    int i = 0;
-
     char *saveptr;
+
     commands[count] = strtok_r(input_string, "|", &saveptr);
 
     while (commands[count] != NULL && count < 99)
@@ -69,14 +68,20 @@ void execute_external_commands(char *input_string)
 
         int len = strlen(commands[j]);
 
-        while (len > 0 && (commands[j][len - 1] == ' ' || commands[j][len - 1] == '\t'))
+        while (len > 0 &&
+               (commands[j][len - 1] == ' ' ||
+                commands[j][len - 1] == '\t'))
+        {
             commands[j][--len] = '\0';
+        }
 
         if (commands[j][0] == '\0')
         {
             fprintf(stderr, "Invalid null command in pipeline\n");
+
             if (prev_read != -1)
                 close(prev_read);
+
             return;
         }
 
@@ -85,8 +90,10 @@ void execute_external_commands(char *input_string)
             if (pipe(pipefd) == -1)
             {
                 perror("pipe");
+
                 if (prev_read != -1)
                     close(prev_read);
+
                 return;
             }
         }
@@ -111,6 +118,8 @@ void execute_external_commands(char *input_string)
 
         if (child == 0)
         {
+            /* Child process */
+
             if (prev_read != -1)
             {
                 dup2(prev_read, STDIN_FILENO);
@@ -125,7 +134,8 @@ void execute_external_commands(char *input_string)
             }
 
             char *arg_saveptr;
-            i = 0;
+            int i = 0;
+
             args[i] = strtok_r(commands[j], " \t", &arg_saveptr);
 
             while (args[i] != NULL && i < 98)
@@ -143,6 +153,7 @@ void execute_external_commands(char *input_string)
             exit(EXIT_FAILURE);
         }
 
+        /* Parent process */
         pids[j] = child;
 
         if (prev_read != -1)
@@ -155,17 +166,23 @@ void execute_external_commands(char *input_string)
         }
     }
 
+    if (prev_read != -1)
+        close(prev_read);
+
+    /* Wait for all pipeline children */
     for (int j = 0; j < count; j++)
     {
         int child_status;
 
-        if (waitpid(pids[j], &child_status, 0) == -1)
+        if (waitpid(pids[j], &child_status, WUNTRACED) == -1)
         {
             perror("waitpid");
             continue;
         }
 
-        if (j == count - 1)
+        if (WIFSTOPPED(child_status))
+            insert_job(pids[j], "Stopped", input_string);    
+        else if (j == count - 1)
         {
             if (WIFEXITED(child_status))
                 status = WEXITSTATUS(child_status);
@@ -173,4 +190,6 @@ void execute_external_commands(char *input_string)
                 status = 128 + WTERMSIG(child_status);
         }
     }
+
+    pid = -1;
 }
